@@ -22,6 +22,7 @@
 #endif
 #define AREAS_BBS  0
 
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -3875,6 +3876,7 @@ void opening(char *cfgfile, char *areafile)
     parseconfig(fp);
     fclose(fp);
 
+    setlocale(LC_CTYPE,  "");
                                 /* initialise the FSP 1013  charset engine */
     read_charset_maps(ST->readmap, ST->writemap);
     recode_area_descriptions();
