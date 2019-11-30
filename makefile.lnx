@@ -29,7 +29,7 @@ LFLAGS= -L../smapi -s
 
 TARGET=	msged
 MSGAPI=-lsmapilnx
-TERMCAP=-lncurses
+TERMCAP=-lncursesw
 
 objs=   addr.o     \
 	ansi.o     \
