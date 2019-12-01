@@ -3880,7 +3880,7 @@ void opening(char *cfgfile, char *areafile)
     fclose(fp);
 
     setlocale(LC_CTYPE,  "");
-    local_charset = nl_langinfo(LC_CTYPE);
+    local_charset = nl_langinfo(CODESET);
     set_local_charset(local_charset);
                                 /* initialise the FSP 1013  charset engine */
     read_charset_maps(ST->readmap, ST->writemap);
