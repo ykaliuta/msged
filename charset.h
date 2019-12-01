@@ -1,5 +1,6 @@
 #ifndef __CHARSET_H__
 #define __CHARSET_H__
+#include <iconv.h>
 
 /*
  *  CHARSET.H
@@ -11,18 +12,8 @@
 
 typedef struct _lookuptable
 {
-    char           from_charset[9];
-    char           to_charset[9];
-    int            level;
-    char           lookuptable[256];
+    iconv_t cd;
 } LOOKUPTABLE;
-
-typedef struct _readwritemap
-{
-    char           charset_name[9];
-    int            n_tables;
-    LOOKUPTABLE   *tables;
-} READWRITEMAPS;
 
 typedef struct _charsetalias
 {
