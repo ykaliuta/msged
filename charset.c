@@ -34,6 +34,7 @@ static int naliases = 0;
 
 static LOOKUPTABLE maskout_table;
 
+static char *local_charset;
 
 /* register an alias name for a charset kludge (for backward compatibility with
    things like IBMPC, 7_FIDO or RUFIDO ... */
@@ -486,6 +487,11 @@ char *get_local_charset(void)
 
     sprintf (buffer, "%s 2", readmaps->charset_name);
     return buffer;
+}
+
+void set_local_charset(char *charset)
+{
+    local_charset = charset;
 }
 
 static int ct_comparator(const void *p1, const void *p2)

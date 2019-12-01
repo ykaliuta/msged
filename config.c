@@ -22,6 +22,7 @@
 #endif
 #define AREAS_BBS  0
 
+#include <langinfo.h>
 #include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -3856,6 +3857,7 @@ void opening(char *cfgfile, char *areafile)
     int count = 0, i;
     static char cfnname[] = DEFAULT_CONFIG_FILE;
     char tmp[PATHLEN];
+    char *local_charset;
 
     InitVars();
 
@@ -3877,8 +3879,11 @@ void opening(char *cfgfile, char *areafile)
     fclose(fp);
 
     setlocale(LC_CTYPE,  "");
+    local_charset = nl_langinfo(LC_CTYPE);
+    set_local_charset(local_charset);
                                 /* initialise the FSP 1013  charset engine */
     read_charset_maps(ST->readmap, ST->writemap);
+
     recode_area_descriptions();
     if (!have_readtable ("IBMPC", 2))
     {
