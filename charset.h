@@ -39,6 +39,7 @@ void destroy_charset_maps (void);        /* destroy the charset engine    */
 int          have_readtable      (const char *, int);
 LOOKUPTABLE *get_readtable       (const char *, int);
 LOOKUPTABLE *get_writetable      (const char *, int*);
+void         put_table           (LOOKUPTABLE *);
 void         charset_alias       (const char *, const char *);
 int          get_codepage_number (const char *);
 

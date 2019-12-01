@@ -348,6 +348,7 @@ static void getheader(unsigned long n, MLHEAD * h, int check_sel)
     h->fr_name[36] = '\0';
     release(text);
 
+    put_table(ltable);
     dispose(x);
 }
 

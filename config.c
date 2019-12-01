@@ -1583,6 +1583,7 @@ static void recode_area_descriptions(void)
             arealist[i].description = tempdsc;
         }
     }
+    put_table(ltable);
 }
 
 /* check_fastecho - reads the areas in a FastEcho 1.45 configuration file */

@@ -749,6 +749,7 @@ msg *readmsg(unsigned long n)
         release(m->subj); m->subj = tmp;
         strip_control_chars(m->subj);
     }
+    put_table(ltable);
 
     if (set_rcvd)
     {
@@ -2251,6 +2252,8 @@ int writemsg(msg * m)
      *  Clean up. If this message is a CC, then we don't want this
      *  temporary information to remain.
      */
+
+    put_table(ltable);
 
     if ((uucp_from || uucp_to) && (ublank != NULL))
     {

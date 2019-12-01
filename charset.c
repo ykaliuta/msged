@@ -344,6 +344,10 @@ LOOKUPTABLE * get_writetable(const char *charset_name, int *allowed)
     return NULL;  /* can't help */
 }
 
+void put_table(LOOKUPTABLE *table)
+{
+    /* empty for internal recoding, will be used for iconv */
+}
 
 
 /* Test if we have a read table for this charset */
