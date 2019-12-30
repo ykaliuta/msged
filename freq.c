@@ -133,7 +133,7 @@ void makefreq(void)
         while (line->next != NULL)
         {
             l = 0;
-            strcpy(txt, line->text);
+            strcpy(txt, line_str(line));
             txt[20] = '\0';
             if ((strchr(txt, '.')) && ((!strstr(txt, "---"))
                                        && (!strstr(txt, "..."))))
@@ -163,7 +163,7 @@ void makefreq(void)
                         break;
                     }
                 }
-                strcpy(txt, &line->text[l]);
+                strcpy(txt, &(line_str(line)[l]));
                 while(txt[0]==' ')
                 {
                     memmove(txt, &txt[1], strlen(txt));
@@ -554,7 +554,7 @@ void makefreq(void)
             length=0L;
             while (l2)
             {
-                length += strlen(l2->text);
+		length += line_size(l2) - 1;
                 l2 = l2->next;
             }
                 

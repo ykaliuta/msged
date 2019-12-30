@@ -9,6 +9,7 @@
 #ifndef __NEDIT_H__
 #define __NEDIT_H__
 
+#include <stdlib.h>
 /*
  *  Probably possible to have an extra field called block_len, containing
  *  the length of the block - this would allow rectangular blocks.
@@ -26,5 +27,8 @@ typedef struct _line
     struct _line *next;         /* next line in BUFFER */
 }
 LINE;
+
+size_t line_len(LINE *);
+char *line_str(LINE *);
 
 #endif

@@ -704,7 +704,7 @@ msg *readmsg(unsigned long n)
 
 	    if (l->quote)
 	    {
-		if (strlen(l->text) > maxx)
+		if (line_len(l) > maxx)
 		{
 		    wrap(l, 1, maxy, maxx);
 		    while (l->next)
@@ -715,7 +715,7 @@ msg *readmsg(unsigned long n)
 	    }
 	    else
 	    {
-		if (*text != '\01' && *text != '\n' && strlen(text) > maxx)
+		if (*text != '\01' && *text != '\n' && line_len(l) > maxx)
 		{
 		    wrap(l, 1, maxy, maxx);
 		    while (l->next)
