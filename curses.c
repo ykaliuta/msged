@@ -10,10 +10,13 @@
 
 #ifdef USE_CURSES
 
+#define _XOPEN_SOURCE
+#define _XOPEN_SOURCE_EXTENDED
+
 #include <sys/types.h>
 #include <sys/time.h>
 #include <ctype.h>
-#include <ncurses.h>
+#include <ncursesw/curses.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -24,6 +27,7 @@
 #include "keys.h"
 #include "readtc.h"
 #include "specch.h"
+#include "charset.h"
 
 int color;
 int vrow, vcol;
@@ -296,7 +300,7 @@ int TTStrWr(unsigned char *s, int row, int col, int len)
     return 1;
 }
 
-int TTReadStr(unsigned long *b, int len, int row, int col)
+static int TTReadStr_8bit(unsigned long *b, int len, int row, int col)
 {
     while(len--)
     {
@@ -319,6 +323,52 @@ int TTReadStr(unsigned long *b, int len, int row, int col)
     move(vrow, vcol);
     ttrefresh();
     return 1;
+}
+
+/* from ncurses */
+#define CCHARW_MAX	5
+
+static int TTReadStr_utf8(unsigned long *b, int len, int row, int col)
+{
+    cchar_t cch;
+    wchar_t wch[CCHARW_MAX];
+    unsigned char buffer[CCHARW_MAX * 4];
+    attr_t attrs;
+    short color_pair;
+    mbstate_t state;
+    const wchar_t *wcp;
+    int width;
+    size_t mb_count;
+    int i;
+
+    while(len--)
+    {
+	mvin_wch(row, col, &cch);
+        getcchar(&cch, wch, &attrs, &color_pair, NULL);
+
+	width = wcwidth(wch[0]);
+
+	memset(&state, 0, sizeof(state));
+	wcp = wch;
+	mb_count = wcsrtombs(buffer, &wcp, sizeof(buffer), &state);
+
+	for (i = 0; i < mb_count; i++)
+	    *b++ = buffer[i] | attrs;
+
+	col += width;
+	len -= width - 1;
+    }
+    move(vrow, vcol);
+    ttrefresh();
+    return 1;
+}
+
+int TTReadStr(unsigned long *b, int len, int row, int col)
+{
+    if (is_local_utf8())
+	return TTReadStr_utf8(b, len, row, col);
+    else
+	return TTReadStr_8bit(b, len, row, col);
 }
 
 int TTScroll(int x1, int y1, int x2, int y2, int lines, int dir)
@@ -347,7 +397,7 @@ int TTScroll(int x1, int y1, int x2, int y2, int lines, int dir)
     if (lines <= 0)
         return 0;
     
-    buf = malloc(width*sizeof(unsigned long));
+    buf = malloc(width*sizeof(unsigned long) * 4);
     if (buf == NULL)
         return 0;
     

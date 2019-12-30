@@ -26,6 +26,7 @@ static CHARSETALIAS *aliases = NULL;
 static int naliases = 0;
 
 static char *local_charset;
+static bool local_utf8;
 
 /* register an alias name for a charset kludge (for backward compatibility with
    things like IBMPC, 7_FIDO or RUFIDO ... */
@@ -90,7 +91,7 @@ struct str_to_str level1_map[] = {
     { "UK", "ISO646-GB" },
 };
 
-static char *charset_level_to_iconv(const char *charset, int level)
+static const char *charset_level_to_iconv(const char *charset, int level)
 {
     int i;
 
@@ -287,6 +288,16 @@ char *get_local_charset(void)
 void set_local_charset(char *charset)
 {
     local_charset = charset;
+
+    if (stricmp(local_charset, "utf-8") == 0)
+	local_utf8 = true;
+    else
+	local_utf8 = false;
+}
+
+bool is_local_utf8(void)
+{
+    return local_utf8;
 }
 
 static int ct_comparator(const void *p1, const void *p2)
