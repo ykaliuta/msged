@@ -1,6 +1,7 @@
 #ifndef __CHARSET_H__
 #define __CHARSET_H__
 #include <iconv.h>
+#include <stdbool.h>
 
 /*
  *  CHARSET.H
