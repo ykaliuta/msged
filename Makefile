@@ -98,6 +98,7 @@ objs=   addr$(OBJ)     \
 	msg$(OBJ)      \
 	msged$(OBJ)    \
 	mxbt$(OBJ)     \
+	nedit$(OBJ)    \
 	normalc$(OBJ)  \
 	nshow$(OBJ)    \
 	quick$(OBJ)    \
@@ -127,6 +128,9 @@ do-maps:
 	(cd maps && $(MAKE) -f makefile.husky)
 	(cd doc && cd manual && $(MAKE) -f makefile.husky)
 
+
+inspect.%:
+	echo $($*)
 
 %$(OBJ): %.c
 	$(CC) $(CFLAGS) $(CDEFS) -c $*.c
