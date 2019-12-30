@@ -870,18 +870,19 @@ void RefreshMsg(LINE * line, int y)
         return;
     }
 
+    TTBeginOutput();
+    if (SW->statbar)
+    {
+	WndClear(0, y, maxx - 1, maxy - 2, cm[CM_NTXT]);
+    }
+    else
+    {
+	WndClear(0, y, maxx - 1, maxy - 1, cm[CM_NTXT]);
+    }
+    TTEndOutput();
+
     if (!line)
     {
-        TTBeginOutput();
-        if (SW->statbar)
-        {
-            WndClear(0, y, maxx - 1, maxy - 2, cm[CM_NTXT]);
-        }
-        else
-        {
-            WndClear(0, y, maxx - 1, maxy - 1, cm[CM_NTXT]);
-        }
-        TTEndOutput();
         return;
     }
 
