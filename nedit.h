@@ -29,6 +29,12 @@ typedef struct _line
 LINE;
 
 size_t line_len(LINE *);
+size_t line_size(LINE *);
 char *line_str(LINE *);
+char *line_chr(LINE *, int);
+long utf8_len(char *);
+char *utf8_pos(char *, long);
+/* number of utf8 chars between pointers */
+long utf8_range(char *, char *);
 
 #endif

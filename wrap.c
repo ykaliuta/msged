@@ -478,16 +478,18 @@ char *GetWrapPoint(char *text, int rm)
 
     /* find the point to look for a wrap and save the spot */
 
-    slen = strlen(text);
+    slen = utf8_len(text);
 
     if (slen > rm)
     {
-        sp = text + (rm - 1);
+        sp = utf8_pos(text, rm - 1);
     }
     else
     {
-        sp = text + (slen - 1);
+        sp = utf8_pos(text, slen - 1);
     }
+    if (sp == NULL)
+	return NULL;
 
     s = sp;
 
@@ -558,6 +560,8 @@ int wrap(LINE * cl, int x, int y, int rm)
     char *s, *t, *tl, ch;
     int wrapped_line = 0;
     int slen, space;
+    size_t ssize;
+    int nlen;
 
     unused(x);
     unused(y);
@@ -570,7 +574,7 @@ int wrap(LINE * cl, int x, int y, int rm)
 
         nl = l->next;
 
-        if (l->text == NULL || strlen(l->text) < rm)
+        if (l->text == NULL || line_len(l) < rm)
         {
             /* we may want to copy stuff from the next line to this
                one */
@@ -586,7 +590,7 @@ int wrap(LINE * cl, int x, int y, int rm)
              *  line, we want to stop wrapping and return.
              */
 
-            if (l->text != NULL && strchr(l->text, '\n') != NULL)
+            if (l->text != NULL && line_chr(l, '\n') != NULL)
             {
                 return wrapped_line;
             }
@@ -597,7 +601,8 @@ int wrap(LINE * cl, int x, int y, int rm)
 
             if (l->text != NULL)
             {
-                slen = strlen(l->text);
+                slen = line_len(l);
+		ssize = line_size(l) - 1;
             }
             else
             {
@@ -612,14 +617,19 @@ int wrap(LINE * cl, int x, int y, int rm)
              */
 
             space = rm - slen;
-            if (space > strlen(s) ||  
-                (space == strlen(s) &&
+
+	    nlen = utf8_len(s);
+	    if (nlen < 0)
+		nlen = strlen(s);
+
+            if (space > nlen ||
+                (space == nlen &&
                  ((l->text != NULL && trailspace(l->text) != 0) ||
                   iswhspace(*s))))
             {
                 /* then we move the entire line up */
 
-                tl = xcalloc(1, strlen(s) + slen + 2);
+                tl = xcalloc(1, strlen(s) + ssize + 2);
 
                 /* Copy the text to the new memory. */
 
@@ -684,7 +694,9 @@ int wrap(LINE * cl, int x, int y, int rm)
 
                 /* We want to copy some words up to this line; */
 
-                t = s + space - 1;
+		t = utf8_pos(s, space - 1);
+		if (t == NULL)
+		    t = s + space - 1;
                 tl = t;
 
                 /*
@@ -730,7 +742,7 @@ int wrap(LINE * cl, int x, int y, int rm)
                 ch = *t;
                 *t = '\0';
 
-                tl = xcalloc(1, strlen(s) + slen + 2);
+                tl = xcalloc(1, strlen(s) + ssize + 2);
 
                 /* Copy stuff to be wrapped to the new memory. */
 

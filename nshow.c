@@ -637,12 +637,15 @@ void PutLine(LINE * l, int y)
     int Attr = (l->block) ? cm[CM_BTXT] : (l->quote) ? cm[CM_QTXT] : (l->hide) ? cm[CM_KTXT] : (l->templt) ? cm[CM_TTXT] : cm[CM_NTXT];
     char *s, *pcr, *plf;
     int len;
+    long utf8len;
     
     strcpy(line, l->text);
 #ifdef UNIX
     if (*line == '\001')
         *line = '@';
 #endif
+
+    utf8len = utf8_len(line);
 
     pcr = strchr(line, '\r');
     plf = strchr(line, '\n');
@@ -673,35 +676,39 @@ void PutLine(LINE * l, int y)
             *s = '\0';
         }
         len = s - line;
+	utf8len = utf8_range(line, s);
     }
     else
     {
-        len = strlen(line);
+	len = strlen(line);
     }
-    if (len)
+    if (utf8len)
     {
-        if (len > maxx)
+        if (utf8len > maxx)
         {
-            len = maxx;
+	    char *p;
+
+	    p = utf8_pos(line, maxx);
+	    len = p - line;
         }
         WndPutsn(0, y, len, Attr, line);
     }
     if (SW->showcr)
     {
-        if (line[len] && len < maxx)
+        if (line[len] && utf8len < maxx)
         {
-            WndPutsn(len, y, 1, Attr | F_ALTERNATE, line + len);
+            WndPutsn(utf8len, y, 1, Attr | F_ALTERNATE, line + len);
             len++;
         }
-        if (SW->showeol && len < maxx)
+        if (SW->showeol && utf8len < maxx)
         {
-            WndPrintf(len, y, Attr | F_ALTERNATE, "%c", SC21);
+            WndPrintf(utf8len, y, Attr | F_ALTERNATE, "%c", SC21);
             len++;
         }
     }
-    if (len < maxx)
+    if (utf8len < maxx)
     {
-        WndPutsn(len, y, maxx - len, Attr, " ");
+        WndPutsn(utf8len, y, maxx - len, Attr, " ");
     }
 }
 

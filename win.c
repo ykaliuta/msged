@@ -30,6 +30,7 @@
 #include "keys.h"
 #include "winsys.h"
 #include "mcompile.h"
+#include "nedit.h"
 
 #define XMOD(w) ((w->flags & INSBDR) ? 3 : ((w->flags & NBDR) ? 0 : 1))
 #define YMOD(w) ((w->flags & INSBDR) ? 2 : ((w->flags & NBDR) ? 0 : 1))
@@ -494,8 +495,7 @@ void WndWriteStr(int x, int y, int Attr, char *Str)
         return;
     }
 
-    len = strlen(Str);
-
+    len = utf8_len(Str);
 
     if (CW == NULL)
     {
@@ -537,16 +537,20 @@ void WndWriteStr(int x, int y, int Attr, char *Str)
 
     if ((col + len - 1) > CW->x2 - XMOD(CW))
     {
+	char *p;
+
         len = ((CW->x2 - XMOD(CW)) - col + 1);
-        PrintStr = xmalloc(len + 1);
-        memcpy(PrintStr, Str, len);
-        PrintStr[len] = '\0';
+
+	p = utf8_pos(Str, len);
+        PrintStr = xmalloc(p - Str + 1);
+        memcpy(PrintStr, Str, p - Str);
+        PrintStr[p - Str] = '\0';
     }
 
     TTBeginOutput();
 
     TTScolor(Attr);
-    TTStrWr((unsigned char *)PrintStr, row, col, len);
+    TTStrWr((unsigned char *)PrintStr, row, col, strlen(PrintStr));
 
     if (PrintStr != Str)
     {
