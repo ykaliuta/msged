@@ -373,7 +373,7 @@ int TTReadStr(unsigned long *b, int len, int row, int col)
 
 int TTScroll(int x1, int y1, int x2, int y2, int lines, int dir)
 {
-#if 0
+#if 1
     /* 
      *  XXX  If you can make this work - mail me
      *  XXX  (Seems that TTClear doesn't work properly too)
@@ -387,7 +387,8 @@ int TTScroll(int x1, int y1, int x2, int y2, int lines, int dir)
     scrollok(win, TRUE);
     wscrl(win, dir ? lines : -lines);
     touchline(stdscr, y1, height);
-    wttrefresh(win);
+    /* wttrefresh(win); */
+    wrefresh(win);
     delwin(win);
 #else
     int y;
