@@ -491,6 +491,36 @@ static unsigned meta_digits[] =
 
 void TTSendMsg(int msg, int x, int y, int msgtype);
 
+/* continue to read multibyte sequence after ch */
+static unsigned read_mb(int ch)
+{
+    unsigned res;
+    int i;
+    int ch_next;
+
+    res = ch;
+
+    nocbreak();
+
+    for (i = 0; i < sizeof(res) - 1; i++) {
+        timeout(0);
+        ch_next = getch();
+
+        if (ch_next == ERR)
+            break;
+
+        res <<= 8;
+        res |= ch_next & 0xFF;
+    }
+
+    timeout(-1);
+
+    if (i == sizeof(res) - 1)
+        res = (unsigned)-1;
+
+    return res;
+}
+
 unsigned int TTGetKey(void)
 {
     int ch;
@@ -631,7 +661,7 @@ unsigned int TTGetKey(void)
 
     if (ch >= 127)    /* Treat special characters */
     {
-        int assume_meta_key = 1;
+        int assume_meta_key = 0;
  
                       /* if the character has not been explicitly */
                       /* enabled by the user, we check if it is a */
@@ -667,6 +697,7 @@ unsigned int TTGetKey(void)
                 ch = meta_digits[ch - 128 - '0'];
             }
         }
+        ch = read_mb(ch);
     }
 
     return ch;
