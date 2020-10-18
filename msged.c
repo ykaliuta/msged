@@ -2276,7 +2276,7 @@ int main(int argc, char *argv[])
         arealist_area_scan(1);
     }
     /* DrawHeader(); */
-    RegisterKeyProc(CKey);      /* to allow for macros in the system */
+//    RegisterKeyProc(CKey);      /* to allow for macros in the system */
 
     while (endMain == 2 || newarea() >= 0)
     {
